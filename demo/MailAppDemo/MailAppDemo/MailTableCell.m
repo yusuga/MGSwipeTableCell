@@ -69,6 +69,10 @@
         [self.contentView addSubview:_mailSubject];
         [self.contentView addSubview:_mailTime];
         [self.contentView addSubview:_indicatorView];
+        
+#if 1
+        self.ys_constantButtonHeight = 50.f;
+#endif
     }
     return self;
 }

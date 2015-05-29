@@ -554,18 +554,31 @@ typedef struct MGSwipeAnimationData {
     }
     
     [self fetchButtonsIfNeeded];
+    
+    UIViewAutoresizing autoresizing = UIViewAutoresizingNone;
+    CGFloat viewHeight = 0.f;
+    CGFloat viewY = 0.f;
+    if (self.ys_constantButtonHeight > 0.f) {
+        viewHeight = self.ys_constantButtonHeight;
+        if (viewHeight > _swipeOverlay.bounds.size.height) viewHeight = _swipeOverlay.bounds.size.height;
+        viewY = _swipeOverlay.bounds.size.height/2.f - viewHeight/2.f;
+    } else {
+        autoresizing = UIViewAutoresizingFlexibleHeight;
+        viewHeight = _swipeOverlay.bounds.size.height;
+    }
+    
     if (!_leftView && _leftButtons.count > 0) {
         _leftView = [[MGSwipeButtonsView alloc] initWithButtons:_leftButtons direction:MGSwipeDirectionLeftToRight differentWidth:_allowsButtonsWithDifferentWidth];
-        _leftView.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleHeight;
+        _leftView.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | autoresizing;
         _leftView.cell = self;
-        _leftView.frame = CGRectMake(-_leftView.bounds.size.width, 0, _leftView.bounds.size.width, _swipeOverlay.bounds.size.height);
+        _leftView.frame = CGRectMake(-_leftView.bounds.size.width, viewY, _leftView.bounds.size.width, viewHeight);
         [_swipeOverlay addSubview:_leftView];
     }
     if (!_rightView && _rightButtons.count > 0) {
         _rightView = [[MGSwipeButtonsView alloc] initWithButtons:_rightButtons direction:MGSwipeDirectionRightToLeft differentWidth:_allowsButtonsWithDifferentWidth];
-        _rightView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleHeight;
+        _rightView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | autoresizing;
         _rightView.cell = self;
-        _rightView.frame = CGRectMake(_swipeOverlay.bounds.size.width, 0, _rightView.bounds.size.width, _swipeOverlay.bounds.size.height);
+        _rightView.frame = CGRectMake(_swipeOverlay.bounds.size.width, viewY, _rightView.bounds.size.width, viewHeight);
         [_swipeOverlay addSubview:_rightView];
     }
 }
