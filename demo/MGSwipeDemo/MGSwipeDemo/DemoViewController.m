@@ -132,6 +132,7 @@
 -(NSArray *) createRightButtons: (int) number
 {
     NSMutableArray * result = [NSMutableArray array];
+#if 1
     NSString* titles[2] = {@"Delete", @"More"};
     UIColor * colors[2] = {[UIColor redColor], [UIColor lightGrayColor]};
     for (int i = 0; i < number; ++i)
@@ -143,6 +144,19 @@
         }];
         [result addObject:button];
     }
+#else
+    NSString* titles[6] = {@"Delete", @"More", @"Delete", @"More", @"Delete", @"More"};
+    UIColor * colors[6] = {[UIColor redColor], [UIColor lightGrayColor], [UIColor redColor], [UIColor lightGrayColor], [UIColor redColor], [UIColor lightGrayColor]};
+    for (int i = 0; i < 6; ++i)
+    {
+        MGSwipeButton * button = [MGSwipeButton buttonWithTitle:titles[i] backgroundColor:colors[i] callback:^BOOL(MGSwipeTableCell * sender){
+            NSLog(@"Convenience callback received (right).");
+            BOOL autoHide = i != 0;
+            return autoHide; //Don't autohide in delete button to improve delete expansion animation
+        }];
+        [result addObject:button];
+    }
+#endif
     return result;
 }
 
@@ -182,6 +196,10 @@
     cell.accessoryType = accessory;
     cell.delegate = self;
     cell.allowsMultipleSwipe = allowMultipleSwipe;
+    
+#if 1
+    cell.ys_constantButtonContainerWidth = 300.;
+#endif
     
     if (background) { //transparency test
         cell.backgroundColor = [UIColor clearColor];

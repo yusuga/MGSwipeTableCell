@@ -57,7 +57,10 @@
 
 #pragma mark Layout
 
--(instancetype) initWithButtons:(NSArray*) buttonsArray direction:(MGSwipeDirection) direction differentWidth:(BOOL) differentWidth
+-(instancetype) initWithButtons:(NSArray*)buttonsArray
+                      direction:(MGSwipeDirection)direction
+                 differentWidth:(BOOL)differentWidth
+         constantContainerWidth:(CGFloat)constantContainerWidth
 {
     CGFloat containerWidth = 0;
     CGSize maxSize = CGSizeZero;
@@ -69,6 +72,11 @@
     }
     if (!differentWidth) {
         containerWidth = maxSize.width * buttonsArray.count;
+    }
+    
+    if (constantContainerWidth) {
+        containerWidth = constantContainerWidth;
+        maxSize.width = constantContainerWidth/(CGFloat)buttonsArray.count;
     }
     
     if (self = [super initWithFrame:CGRectMake(0, 0, containerWidth, maxSize.height)]) {
@@ -568,14 +576,20 @@ typedef struct MGSwipeAnimationData {
     }
     
     if (!_leftView && _leftButtons.count > 0) {
-        _leftView = [[MGSwipeButtonsView alloc] initWithButtons:_leftButtons direction:MGSwipeDirectionLeftToRight differentWidth:_allowsButtonsWithDifferentWidth];
+        _leftView = [[MGSwipeButtonsView alloc] initWithButtons:_leftButtons
+                                                      direction:MGSwipeDirectionLeftToRight
+                                                 differentWidth:_allowsButtonsWithDifferentWidth
+                                         constantContainerWidth:self.ys_constantButtonContainerWidth];
         _leftView.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | autoresizing;
         _leftView.cell = self;
         _leftView.frame = CGRectMake(-_leftView.bounds.size.width, viewY, _leftView.bounds.size.width, viewHeight);
         [_swipeOverlay addSubview:_leftView];
     }
     if (!_rightView && _rightButtons.count > 0) {
-        _rightView = [[MGSwipeButtonsView alloc] initWithButtons:_rightButtons direction:MGSwipeDirectionRightToLeft differentWidth:_allowsButtonsWithDifferentWidth];
+        _rightView = [[MGSwipeButtonsView alloc] initWithButtons:_rightButtons
+                                                       direction:MGSwipeDirectionRightToLeft
+                                                  differentWidth:_allowsButtonsWithDifferentWidth
+                                          constantContainerWidth:self.ys_constantButtonContainerWidth];
         _rightView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | autoresizing;
         _rightView.cell = self;
         _rightView.frame = CGRectMake(_swipeOverlay.bounds.size.width, viewY, _rightView.bounds.size.width, viewHeight);

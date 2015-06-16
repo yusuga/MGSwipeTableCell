@@ -185,9 +185,16 @@ typedef NS_ENUM(NSInteger, MGSwipeExpansionLayout) {
 -(void) refreshButtons: (BOOL) usingDelegate;
 
 /**
- *  leftButton, rightButtonの高さを固定にする。描画はclippingされてないのでcellの高さを超えないように注意する。
+ *  leftButton, rightButtonの高さを固定にする。
+ *  Note: 描画はclippingされてないのでcellの高さを超えないように注意する。
  */
 @property (nonatomic) CGFloat ys_constantButtonHeight;
+
+/**
+ *  swipe containerのwidthを固定にする。
+ *  Note: expandSwipeが使えなくなる。
+ */
+@property (nonatomic) CGFloat ys_constantButtonContainerWidth;
 
 @end
 
