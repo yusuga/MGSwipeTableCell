@@ -61,6 +61,7 @@
                       direction:(MGSwipeDirection)direction
                  differentWidth:(BOOL)differentWidth
          constantContainerWidth:(CGFloat)constantContainerWidth
+                 allowLongPress:(BOOL)allowLongPress
 {
     CGFloat containerWidth = 0;
     CGSize maxSize = CGSizeZero;
@@ -89,6 +90,11 @@
         for (UIView * button in _buttons) {
             if ([button isKindOfClass:[UIButton class]]) {
                 [(UIButton *)button addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
+                
+                if (allowLongPress) {
+                    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(buttonLongPressed:)];
+                    [((UIButton *)button) addGestureRecognizer:longPress];
+                }
             }
             if (!differentWidth) {
                 button.frame = CGRectMake(0, 0, maxSize.width, maxSize.height);
@@ -254,14 +260,24 @@
 
 #pragma mark Trigger Actions
 
--(BOOL) handleClick: (id) sender fromExpansion:(BOOL) fromExpansion
+- (BOOL)handleClick:(id)sender
+      fromExpansion:(BOOL)fromExpansion
+{
+    return [self handleClick:sender
+               fromExpansion:fromExpansion
+                 longPressed:NO];
+}
+
+- (BOOL)handleClick:(id)sender
+      fromExpansion:(BOOL)fromExpansion
+        longPressed:(BOOL)longPressed
 {
     bool autoHide = false;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
-    if ([sender respondsToSelector:@selector(callMGSwipeConvenienceCallback:)]) {
+    if ([sender respondsToSelector:@selector(callMGSwipeConvenienceCallback:longPressed:)]) {
         //call convenience block callback if exits (usage of MGSwipeButton class is not compulsory)
-        autoHide = [sender performSelector:@selector(callMGSwipeConvenienceCallback:) withObject:_cell];
+        autoHide = [sender performSelector:@selector(callMGSwipeConvenienceCallback:longPressed:) withObject:_cell withObject:@(longPressed)];
     }
 #pragma clang diagnostic pop
     
@@ -290,6 +306,12 @@
     [self handleClick:sender fromExpansion:NO];
 }
 
+-(void) buttonLongPressed: (UILongPressGestureRecognizer *) sender
+{
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        [self handleClick:sender.view fromExpansion:NO longPressed:YES];
+    }
+}
 
 #pragma mark Transitions
 
@@ -579,7 +601,8 @@ typedef struct MGSwipeAnimationData {
         _leftView = [[MGSwipeButtonsView alloc] initWithButtons:_leftButtons
                                                       direction:MGSwipeDirectionLeftToRight
                                                  differentWidth:_allowsButtonsWithDifferentWidth
-                                         constantContainerWidth:self.ys_constantButtonContainerWidth];
+                                         constantContainerWidth:self.ys_constantButtonContainerWidth
+                                                 allowLongPress:self.ys_allowLongPress];
         _leftView.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | autoresizing;
         _leftView.cell = self;
         _leftView.frame = CGRectMake(-_leftView.bounds.size.width, viewY, _leftView.bounds.size.width, viewHeight);
@@ -589,7 +612,8 @@ typedef struct MGSwipeAnimationData {
         _rightView = [[MGSwipeButtonsView alloc] initWithButtons:_rightButtons
                                                        direction:MGSwipeDirectionRightToLeft
                                                   differentWidth:_allowsButtonsWithDifferentWidth
-                                          constantContainerWidth:self.ys_constantButtonContainerWidth];
+                                          constantContainerWidth:self.ys_constantButtonContainerWidth
+                                                  allowLongPress:self.ys_allowLongPress];
         _rightView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | autoresizing;
         _rightView.cell = self;
         _rightView.frame = CGRectMake(_swipeOverlay.bounds.size.width, viewY, _rightView.bounds.size.width, viewHeight);

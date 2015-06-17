@@ -19,7 +19,7 @@
  * Convenience block callback for developers lazy to implement the MGSwipeTableCellDelegate.
  * @return Return YES to autohide the swipe view
  */
-typedef BOOL(^MGSwipeButtonCallback)(MGSwipeTableCell * sender);
+typedef BOOL(^MGSwipeButtonCallback)(MGSwipeTableCell * sender, BOOL longPressed);
 @property (nonatomic, strong) MGSwipeButtonCallback callback;
 
 /** A width for the expanded buttons. Defaults to 0, which means sizeToFit will be called. */

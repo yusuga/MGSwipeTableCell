@@ -119,8 +119,8 @@
     UIImage * icons[3] = {[UIImage imageNamed:@"check.png"], [UIImage imageNamed:@"fav.png"], [UIImage imageNamed:@"menu.png"]};
     for (int i = 0; i < number; ++i)
     {
-        MGSwipeButton * button = [MGSwipeButton buttonWithTitle:@"" icon:icons[i] backgroundColor:colors[i] padding:15 callback:^BOOL(MGSwipeTableCell * sender){
-            NSLog(@"Convenience callback received (left).");
+        MGSwipeButton * button = [MGSwipeButton buttonWithTitle:@"" icon:icons[i] backgroundColor:colors[i] padding:15 callback:^BOOL(MGSwipeTableCell *sender, BOOL longPressed) {
+            NSLog(@"Convenience callback received (left). longPressed = %zd", longPressed);
             return YES;
         }];
         [result addObject:button];
@@ -137,8 +137,8 @@
     UIColor * colors[2] = {[UIColor redColor], [UIColor lightGrayColor]};
     for (int i = 0; i < number; ++i)
     {
-        MGSwipeButton * button = [MGSwipeButton buttonWithTitle:titles[i] backgroundColor:colors[i] callback:^BOOL(MGSwipeTableCell * sender){
-            NSLog(@"Convenience callback received (right).");
+        MGSwipeButton * button = [MGSwipeButton buttonWithTitle:titles[i] backgroundColor:colors[i] callback:^BOOL(MGSwipeTableCell *sender, BOOL longPressed) {
+            NSLog(@"Convenience callback received (right). longPressed = %zd", longPressed);
             BOOL autoHide = i != 0;
             return autoHide; //Don't autohide in delete button to improve delete expansion animation
         }];
@@ -199,6 +199,9 @@
     
 #if 1
     cell.ys_constantButtonContainerWidth = 300.;
+#endif
+#if 1
+    cell.ys_allowLongPress = YES;
 #endif
     
     if (background) { //transparency test

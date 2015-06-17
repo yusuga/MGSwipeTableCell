@@ -78,10 +78,11 @@
     return button;
 }
 
--(BOOL) callMGSwipeConvenienceCallback: (MGSwipeTableCell *) sender
+-(BOOL)callMGSwipeConvenienceCallback:(MGSwipeTableCell *)sender
+                          longPressed:(NSNumber *)longPressed
 {
     if (_callback) {
-        return _callback(sender);
+        return _callback(sender, longPressed.boolValue);
     }
     return NO;
 }
