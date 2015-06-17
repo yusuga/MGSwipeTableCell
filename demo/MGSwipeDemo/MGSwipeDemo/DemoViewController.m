@@ -142,6 +142,11 @@
             BOOL autoHide = i != 0;
             return autoHide; //Don't autohide in delete button to improve delete expansion animation
         }];
+#if 1
+        if (i%2) {
+            [button setYs_allowLongPressed:YES];
+        }
+#endif
         [result addObject:button];
     }
 #else
@@ -199,9 +204,6 @@
     
 #if 1
     cell.ys_constantButtonContainerWidth = 300.;
-#endif
-#if 1
-    cell.ys_allowLongPress = YES;
 #endif
     
     if (background) { //transparency test

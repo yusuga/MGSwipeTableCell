@@ -8,6 +8,7 @@
 @class MGSwipeTableCell;
 
 @implementation MGSwipeButton
+@synthesize ys_allowLongPressed = _ys_allowLongPressed;
 
 +(instancetype) buttonWithTitle:(NSString *) title backgroundColor:(UIColor *) color
 {

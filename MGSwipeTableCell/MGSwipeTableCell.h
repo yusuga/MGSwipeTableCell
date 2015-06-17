@@ -196,10 +196,5 @@ typedef NS_ENUM(NSInteger, MGSwipeExpansionLayout) {
  */
 @property (nonatomic) CGFloat ys_constantButtonContainerWidth;
 
-/**
- *  ButtonのLong press gestureを許可する。
- */
-@property (nonatomic) BOOL ys_allowLongPress;
-
 @end
 

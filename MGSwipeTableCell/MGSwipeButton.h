@@ -21,6 +21,7 @@
  */
 typedef BOOL(^MGSwipeButtonCallback)(MGSwipeTableCell * sender, BOOL longPressed);
 @property (nonatomic, strong) MGSwipeButtonCallback callback;
+@property (nonatomic, assign) BOOL ys_allowLongPressed;
 
 /** A width for the expanded buttons. Defaults to 0, which means sizeToFit will be called. */
 @property (nonatomic, assign) CGFloat buttonWidth;

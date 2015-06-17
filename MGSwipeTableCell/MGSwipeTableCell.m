@@ -61,7 +61,6 @@
                       direction:(MGSwipeDirection)direction
                  differentWidth:(BOOL)differentWidth
          constantContainerWidth:(CGFloat)constantContainerWidth
-                 allowLongPress:(BOOL)allowLongPress
 {
     CGFloat containerWidth = 0;
     CGSize maxSize = CGSizeZero;
@@ -91,10 +90,24 @@
             if ([button isKindOfClass:[UIButton class]]) {
                 [(UIButton *)button addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
                 
-                if (allowLongPress) {
-                    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(buttonLongPressed:)];
-                    [((UIButton *)button) addGestureRecognizer:longPress];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+                if ([button respondsToSelector:@selector(ys_allowLongPressed)]) {
+                    SEL selector = @selector(ys_allowLongPressed);
+                    
+                    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[[NSClassFromString(@"MGSwipeButton") class] instanceMethodSignatureForSelector:selector]];
+                    [invocation setSelector:selector];
+                    [invocation setTarget:button];
+                    [invocation invoke];
+                    BOOL allow;
+                    [invocation getReturnValue:&allow];
+                    
+                    if (allow) {
+                        UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(buttonLongPressed:)];
+                        [((UIButton *)button) addGestureRecognizer:longPress];
+                    }
                 }
+#pragma clang diagnostic pop
             }
             if (!differentWidth) {
                 button.frame = CGRectMake(0, 0, maxSize.width, maxSize.height);
@@ -601,8 +614,7 @@ typedef struct MGSwipeAnimationData {
         _leftView = [[MGSwipeButtonsView alloc] initWithButtons:_leftButtons
                                                       direction:MGSwipeDirectionLeftToRight
                                                  differentWidth:_allowsButtonsWithDifferentWidth
-                                         constantContainerWidth:self.ys_constantButtonContainerWidth
-                                                 allowLongPress:self.ys_allowLongPress];
+                                         constantContainerWidth:self.ys_constantButtonContainerWidth];
         _leftView.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | autoresizing;
         _leftView.cell = self;
         _leftView.frame = CGRectMake(-_leftView.bounds.size.width, viewY, _leftView.bounds.size.width, viewHeight);
@@ -612,8 +624,7 @@ typedef struct MGSwipeAnimationData {
         _rightView = [[MGSwipeButtonsView alloc] initWithButtons:_rightButtons
                                                        direction:MGSwipeDirectionRightToLeft
                                                   differentWidth:_allowsButtonsWithDifferentWidth
-                                          constantContainerWidth:self.ys_constantButtonContainerWidth
-                                                  allowLongPress:self.ys_allowLongPress];
+                                          constantContainerWidth:self.ys_constantButtonContainerWidth];
         _rightView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | autoresizing;
         _rightView.cell = self;
         _rightView.frame = CGRectMake(_swipeOverlay.bounds.size.width, viewY, _rightView.bounds.size.width, viewHeight);
