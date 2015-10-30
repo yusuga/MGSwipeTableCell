@@ -784,7 +784,11 @@ typedef struct MGSwipeAnimationData {
 
 - (UIImage *)imageFromView:(UIView *)view {
     UIGraphicsBeginImageContextWithOptions(view.bounds.size, NO, [[UIScreen mainScreen] scale]);
-    [view.layer renderInContext:UIGraphicsGetCurrentContext()];
+    if ([view respondsToSelector:@selector(drawViewHierarchyInRect:afterScreenUpdates:)]) {
+        [view drawViewHierarchyInRect:view.bounds afterScreenUpdates:YES];
+    } else {
+        [view.layer renderInContext:UIGraphicsGetCurrentContext()];
+    }
     UIImage * image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return image;
